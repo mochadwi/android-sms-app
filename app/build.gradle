@@ -4,30 +4,116 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
+kapt {
+    javacOptions {
+        // Increase the max count of errors from annotation processors.
+        // Default is 100.
+        option("-Xmaxerrs", 500)
+    }
+}
+
+androidExtensions {
+    experimental = true
+}
+
 android {
-    compileSdkVersion 26
+    dexOptions {
+        javaMaxHeapSize "2g"
+        preDexLibraries true
+    }
+
+    if (project.hasProperty('devBuild')) {
+        splits.density.enable = false
+        aaptOptions.cruncherEnabled = false
+    }
+
+    signingConfigs {
+        debugConfig {
+//            storeFile file('../keystore/debug.keystore')
+//            keyAlias 'AndroidDebugKey'
+//            storePassword 'android'
+//            keyPassword 'android'
+        }
+
+        releaseConfig {
+//            storeFile file('../keystore/sms')
+//            keyAlias 'sms'
+//            storePassword System.getenv('APP_KEY')
+//            keyPassword System.getenv('APP_KEY')
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/platform_release.kotlin_module'
+    }
+
+    compileSdkVersion configVersion.sdk
+    buildToolsVersion '26.0.3'
+
     defaultConfig {
         applicationId "io.mochadwi.analyticssms"
         minSdkVersion 16
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion configVersion.sdk
+        versionCode configVersion.code
+        versionName configVersion.name
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
+
+//        playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            //Other parameters
+            shrinkResources true
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            pseudoLocalesEnabled false
+            zipAlignEnabled true
+
+            signingConfig signingConfigs.releaseConfig
+        }
+        debug {
+            signingConfig signingConfigs.debugConfig
         }
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    kaptAndroidTest(testLibraries.espressoCore, {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+
+    testImplementation testLibraries.jUnit
+    androidTestImplementation testLibraries.jUnitRunner
+    androidTestImplementation testLibraries.espressoCore
+
+    // support
+    implementation supportDependencies.supportAppCompat
+    implementation supportDependencies.appCompat
+    implementation supportDependencies.design
+    implementation supportDependencies.recyclerView
+    implementation supportDependencies.cardView
+    implementation supportDependencies.constraintLayout
+    implementation supportDependencies.multiDex
+    implementation supportDependencies.anko
+
 }
