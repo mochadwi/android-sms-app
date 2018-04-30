@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
@@ -29,22 +29,6 @@ android {
         aaptOptions.cruncherEnabled = false
     }
 
-    signingConfigs {
-        debugConfig {
-//            storeFile file('../keystore/debug.keystore')
-//            keyAlias 'AndroidDebugKey'
-//            storePassword 'android'
-//            keyPassword 'android'
-        }
-
-        releaseConfig {
-//            storeFile file('../keystore/sms')
-//            keyAlias 'sms'
-//            storePassword System.getenv('APP_KEY')
-//            keyPassword System.getenv('APP_KEY')
-        }
-    }
-
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
@@ -61,7 +45,6 @@ android {
     buildToolsVersion '26.0.3'
 
     defaultConfig {
-        applicationId "io.mochadwi.analyticssms"
         minSdkVersion 16
         targetSdkVersion configVersion.sdk
         versionCode configVersion.code
@@ -71,23 +54,23 @@ android {
 
 //        playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
+
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             //Other parameters
-            shrinkResources true
             debuggable false
             jniDebuggable false
             renderscriptDebuggable false
             pseudoLocalesEnabled false
             zipAlignEnabled true
 
-            signingConfig signingConfigs.releaseConfig
+//            signingConfig signingConfigs.releaseConfig
         }
         debug {
-            signingConfig signingConfigs.debugConfig
+//            signingConfig signingConfigs.debugConfig
         }
     }
 }
@@ -115,5 +98,4 @@ dependencies {
     implementation supportDependencies.constraintLayout
     implementation supportDependencies.multiDex
     implementation supportDependencies.anko
-
 }
