@@ -42,10 +42,10 @@ android {
     }
 
     compileSdkVersion configVersion.sdk
-    buildToolsVersion '26.0.3'
+    buildToolsVersion configVersion.buildTools
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion configVersion.minSdk
         targetSdkVersion configVersion.sdk
         versionCode configVersion.code
         versionName configVersion.name
@@ -82,8 +82,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-
+    implementation supportDependencies.kotlin
 
     testImplementation testLibraries.jUnit
     androidTestImplementation testLibraries.jUnitRunner

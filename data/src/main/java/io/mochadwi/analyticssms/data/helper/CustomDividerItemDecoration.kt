@@ -48,9 +48,11 @@ class CustomDividerItemDecoration(context: Context, orientation: Int) : Recycler
             val params = child
                     .layoutParams as RecyclerView.LayoutParams
             val top = child.bottom + params.bottomMargin
-            val bottom = top + mDivider!!.intrinsicHeight
-            mDivider.setBounds(left, top, right, bottom)
-            mDivider.draw(c)
+            mDivider?.apply {
+                val bottom = top + intrinsicHeight
+                setBounds(left, top, right, bottom)
+                draw(c)
+            }
         }
     }
 
@@ -64,17 +66,21 @@ class CustomDividerItemDecoration(context: Context, orientation: Int) : Recycler
             val params = child
                     .layoutParams as RecyclerView.LayoutParams
             val left = child.right + params.rightMargin
-            val right = left + mDivider!!.intrinsicHeight
-            mDivider.setBounds(left, top, right, bottom)
-            mDivider.draw(c)
+            mDivider?.apply {
+                val right = left + intrinsicHeight
+                setBounds(left, top, right, bottom)
+                draw(c)
+            }
         }
     }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        if (mOrientation == VERTICAL_LIST) {
-            outRect.set(0, 0, 0, mDivider!!.intrinsicHeight)
-        } else {
-            outRect.set(0, 0, mDivider!!.intrinsicWidth, 0)
+        mDivider?.apply {
+            if (mOrientation == VERTICAL_LIST) {
+                outRect.set(0, 0, 0, intrinsicHeight)
+            } else {
+                outRect.set(0, 0, intrinsicWidth, 0)
+            }
         }
     }
 

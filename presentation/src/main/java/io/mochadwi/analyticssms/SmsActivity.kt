@@ -43,19 +43,19 @@ class SmsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener,
                     .setAction("Action", null).show()
         }
 
-        swipe_refresh_layout!!.setOnRefreshListener(this)
+        swipe_refresh_layout?.setOnRefreshListener(this)
 
         mAdapter = SmsAdapter(this, messages, this)
         val mLayoutManager = LinearLayoutManager(applicationContext)
-        recycler_view!!.layoutManager = mLayoutManager
-        recycler_view!!.itemAnimator = DefaultItemAnimator()
-        recycler_view!!.addItemDecoration(CustomDividerItemDecoration(this, LinearLayoutManager.VERTICAL))
-        recycler_view!!.adapter = mAdapter
+        recycler_view?.layoutManager = mLayoutManager
+        recycler_view?.itemAnimator = DefaultItemAnimator()
+        recycler_view?.addItemDecoration(CustomDividerItemDecoration(this, LinearLayoutManager.VERTICAL))
+        recycler_view?.adapter = mAdapter
 
         actionModeCallback = ActionModeCallback()
 
         // show loader and fetch messages
-        swipe_refresh_layout!!.post { getInbox() }
+        swipe_refresh_layout?.post { getInbox() }
     }
 
     /**
@@ -63,7 +63,7 @@ class SmsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener,
      * url: https://api.androidhive.info/json/inbox.json
      */
     private fun getInbox() {
-        swipe_refresh_layout!!.isRefreshing = true
+        swipe_refresh_layout?.isRefreshing = true
 
         val apiService = ApiClient.client.create<ApiInterface>(ApiInterface::class.java)
 
@@ -84,13 +84,13 @@ class SmsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener,
                     messages.add(message)
                 }
 
-                mAdapter!!.notifyDataSetChanged()
-                swipe_refresh_layout!!.isRefreshing = false
+                mAdapter?.notifyDataSetChanged()
+                swipe_refresh_layout?.isRefreshing = false
             }
 
             override fun onFailure(call: Call<List<SmsEntity>>, t: Throwable) {
                 Toast.makeText(applicationContext, "Unable to fetch json: " + t.message, Toast.LENGTH_LONG).show()
-                swipe_refresh_layout!!.isRefreshing = false
+                swipe_refresh_layout?.isRefreshing = false
             }
         })
     }
@@ -151,20 +151,20 @@ class SmsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener,
         val message = messages[position]
         message.isImportant = !message.isImportant
         messages[position] = message
-        mAdapter!!.notifyDataSetChanged()
+        mAdapter?.notifyDataSetChanged()
     }
 
     override fun onMessageRowClicked(position: Int) {
         // verify whether action mode is enabled or not
         // if enabled, change the row state to activated
-        if (mAdapter!!.selectedItemCount > 0) {
+        mAdapter?.selectedItemCount?.takeIf { it > 0 }?.let {
             enableActionMode(position)
-        } else {
+        } ?: run {
             // read the message which removes bold from the row
             val message = messages[position]
             message.isRead = true
             messages[position] = message
-            mAdapter!!.notifyDataSetChanged()
+            mAdapter?.notifyDataSetChanged()
 
             Toast.makeText(applicationContext, "Read: " + message.message, Toast.LENGTH_SHORT).show()
         }
@@ -183,14 +183,14 @@ class SmsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener,
     }
 
     private fun toggleSelection(position: Int) {
-        mAdapter!!.toggleSelection(position)
-        val count = mAdapter!!.selectedItemCount
+        mAdapter?.toggleSelection(position)
+        val count = mAdapter?.selectedItemCount
 
         if (count == 0) {
-            actionMode!!.finish()
+            actionMode?.finish()
         } else {
-            actionMode!!.title = count.toString()
-            actionMode!!.invalidate()
+            actionMode?.title = count.toString()
+            actionMode?.invalidate()
         }
     }
 
@@ -200,7 +200,7 @@ class SmsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener,
             mode.menuInflater.inflate(R.menu.menu_action_mode, menu)
 
             // disable swipe refresh if action mode is enabled
-            swipe_refresh_layout!!.isEnabled = false
+            swipe_refresh_layout?.isEnabled = false
             return true
         }
 
@@ -222,23 +222,23 @@ class SmsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener,
         }
 
         override fun onDestroyActionMode(mode: ActionMode) {
-            mAdapter!!.clearSelections()
-            swipe_refresh_layout!!.isEnabled = true
+            mAdapter?.clearSelections()
+            swipe_refresh_layout?.isEnabled = true
             actionMode = null
-            recycler_view!!.post {
-                mAdapter!!.resetAnimationIndex()
-                mAdapter!!.notifyDataSetChanged()
+            recycler_view?.post {
+                mAdapter?.resetAnimationIndex()
+                mAdapter?.notifyDataSetChanged()
             }
         }
     }
 
     // deleting the messages from recycler view
     private fun deleteMessages() {
-        mAdapter!!.resetAnimationIndex()
-        val selectedItemPositions = mAdapter!!.getSelectedItems()
-        for (i in selectedItemPositions.indices.reversed()) {
-            mAdapter!!.removeData(selectedItemPositions[i])
+        mAdapter?.resetAnimationIndex()
+        val selectedItemPositions = mAdapter?.getSelectedItems()
+        selectedItemPositions?.indices?.reversed()?.forEachIndexed { i, _ ->
+            mAdapter?.removeData(selectedItemPositions[i])
         }
-        mAdapter!!.notifyDataSetChanged()
+        mAdapter?.notifyDataSetChanged()
     }
 }

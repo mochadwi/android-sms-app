@@ -31,12 +31,15 @@ class CircleTransform(context: Context) : BitmapTransformation(context) {
             result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
         }
 
-        val canvas = Canvas(result)
-        val paint = Paint()
-        paint.shader = (BitmapShader(squared, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP))
-        paint.isAntiAlias = true
-        val r = size / 2f
-        canvas.drawCircle(r, r, r, paint)
+        result?.let {
+            val canvas = Canvas(result)
+            val paint = Paint()
+            paint.shader = (BitmapShader(squared, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP))
+            paint.isAntiAlias = true
+            val r = size / 2f
+            canvas.drawCircle(r, r, r, paint)
+        }
+
         return result
     }
 

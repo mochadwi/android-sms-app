@@ -30,12 +30,12 @@ class FlipAnimator {
             val showFrontAnim = AnimatorSet()
             val showBackAnim = AnimatorSet()
 
-            leftIn!!.setTarget(back)
-            rightOut!!.setTarget(front)
+            leftIn?.setTarget(back)
+            rightOut?.setTarget(front)
             showFrontAnim.playTogether(leftIn, rightOut)
 
-            leftOut!!.setTarget(back)
-            rightIn!!.setTarget(front)
+            leftOut?.setTarget(back)
+            rightIn?.setTarget(front)
             showBackAnim.playTogether(rightIn, leftOut)
 
             if (showFront) {
